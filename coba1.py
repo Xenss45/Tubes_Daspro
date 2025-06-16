@@ -1,22 +1,24 @@
-# Data film: [id, nama_film, jumlah_kursi]
-film1 = [1, "Avengers: Endgame", 50]
-film2 = [2, "Inception", 40]
-film3 = [3, "Interstellar", 30]
-film4 = [4, "The Batman", 25]
+# Film dengan 3 jadwal waktu berbeda
+film1 = [1, "Avengers: Endgame", 50, ["10:00", "14:00", "18:00"]]
+film2 = [2, "Inception", 50, ["11:00", "15:00", "19:00"]]
+film3 = [3, "Interstellar", 50, ["12:00", "16:00", "20:00"]]
+film4 = [4, "The Batman", 50, ["13:00", "17:00", "21:00"]]
 
 HARGA_TIKET = 30000
 BATAS_DISKON = 5
-DISKON = 10  # dalam persen
+DISKON = 10  
 
-# Kursi untuk setiap film (0 = kosong, 1 = terisi)
-kursi_film1 = [0] * film1[2]  # 50 kursi
-kursi_film2 = [0] * film2[2]  # 40 kursi  
-kursi_film3 = [0] * film3[2]  # 30 kursi
-kursi_film4 = [0] * film4[2]  # 25 kursi
+# Kursi untuk setiap film dan setiap jadwal waktu (0 = kosong, 1 = terisi)
+# Format: kursi_film[film_id][jadwal][kursi]
+kursi_film1 = [[0] * film1[2] for _ in range(3)]  # 3 jadwal, 50 kursi each
+kursi_film2 = [[0] * film2[2] for _ in range(3)]  # 3 jadwal, 50 kursi each
+kursi_film3 = [[0] * film3[2] for _ in range(3)]  # 3 jadwal, 50 kursi each
+kursi_film4 = [[0] * film4[2] for _ in range(3)]  # 3 jadwal, 50 kursi each
 
 # Data pemesanan
 nama_pemesan = [""] * 100
 film_dipesan = [""] * 100
+jadwal_dipesan = [""] * 100
 jumlah_tiket = [0] * 100
 total_harga = [0] * 100
 kursi_dipilih = [[] for i in range(100)]
@@ -39,47 +41,73 @@ def input_angka(pesan):
             return int(nilai)
         print("❌ Input harus berupa angka. Silakan coba lagi.")
 
-def hitung_kursi_kosong(film_id):
-    """Menghitung jumlah kursi yang masih kosong"""
+def get_film_data(film_id):
+    """Mendapatkan data film berdasarkan ID"""
     if film_id == 1:
-        return kursi_film1.count(0)
+        return film1
     elif film_id == 2:
-        return kursi_film2.count(0)
+        return film2
     elif film_id == 3:
-        return kursi_film3.count(0)
+        return film3
     elif film_id == 4:
-        return kursi_film4.count(0)
-    return 0
+        return film4
+    return None
+
+def get_kursi_array(film_id):
+    """Mendapatkan array kursi berdasarkan film ID"""
+    if film_id == 1:
+        return kursi_film1
+    elif film_id == 2:
+        return kursi_film2
+    elif film_id == 3:
+        return kursi_film3
+    elif film_id == 4:
+        return kursi_film4
+    return None
+
+def hitung_kursi_kosong(film_id, jadwal_index):
+    """Menghitung jumlah kursi yang masih kosong untuk film dan jadwal tertentu"""
+    kursi_array = get_kursi_array(film_id)
+    if kursi_array is None:
+        return 0
+    return kursi_array[jadwal_index].count(0)
 
 def tampilkan_film():
-    """Menampilkan daftar film"""
+    """Menampilkan daftar film dengan jadwal"""
     print("\n--- Daftar Film ---")
-    print(f"{film1[0]}. {film1[1]} ({hitung_kursi_kosong(1)} kursi tersedia)")
-    print(f"{film2[0]}. {film2[1]} ({hitung_kursi_kosong(2)} kursi tersedia)")
-    print(f"{film3[0]}. {film3[1]} ({hitung_kursi_kosong(3)} kursi tersedia)")
-    print(f"{film4[0]}. {film4[1]} ({hitung_kursi_kosong(4)} kursi tersedia)")
+    for film in [film1, film2, film3, film4]:
+        print(f"{film[0]}. {film[1]}")
+        for i, jadwal in enumerate(film[3]):
+            kursi_kosong = hitung_kursi_kosong(film[0], i)
+            print(f"   Jadwal {i+1}: {jadwal} ({kursi_kosong} kursi tersedia)")
 
-def tampilkan_kursi(film_id):
-    """Menampilkan layout kursi"""
-    if film_id == 1:
-        kursi = kursi_film1
-        nama_film = film1[1]
-    elif film_id == 2:
-        kursi = kursi_film2
-        nama_film = film2[1]
-    elif film_id == 3:
-        kursi = kursi_film3
-        nama_film = film3[1]
-    elif film_id == 4:
-        kursi = kursi_film4
-        nama_film = film4[1]
-    else:
+def tampilkan_jadwal_film(film_id):
+    """Menampilkan jadwal untuk film tertentu"""
+    film_data = get_film_data(film_id)
+    if film_data is None:
         return
     
-    print(f"\nKursi untuk {nama_film}:")
+    print(f"\nJadwal untuk {film_data[1]}:")
+    for i, jadwal in enumerate(film_data[3]):
+        kursi_kosong = hitung_kursi_kosong(film_id, i)
+        print(f"{i+1}. {jadwal} ({kursi_kosong} kursi tersedia)")
+
+def tampilkan_kursi(film_id, jadwal_index):
+    """Menampilkan layout kursi untuk film dan jadwal tertentu"""
+    film_data = get_film_data(film_id)
+    kursi_array = get_kursi_array(film_id)
+    
+    if film_data is None or kursi_array is None:
+        return
+    
+    kursi = kursi_array[jadwal_index]
+    nama_film = film_data[1]
+    jadwal = film_data[3][jadwal_index]
+    
+    print(f"\nKursi untuk {nama_film} - Jadwal {jadwal}:")
     print("Nomor kursi: ", end="")
     for i in range(len(kursi)):
-        print(f"{i:2}", end=" ")
+        print(f"{i+1:2}", end=" ")  # Mulai dari 1
     print()
     
     print("Status     : ", end="")
@@ -89,6 +117,7 @@ def tampilkan_kursi(film_id):
         else:
             print("[X]", end="")
     print()
+    print("Keterangan: [ ] = Kosong, [X] = Terisi")
 
 def pesan_tiket():
     """Fungsi untuk memesan tiket"""
@@ -102,12 +131,20 @@ def pesan_tiket():
         print("❌ Film tidak ditemukan. Silakan coba lagi.")
         return
     
+    # Pilih jadwal
+    tampilkan_jadwal_film(film_id)
+    jadwal_pilihan = input_angka("Pilih jadwal (1-3): ") - 1
+    
+    if jadwal_pilihan < 0 or jadwal_pilihan > 2:
+        print("❌ Jadwal tidak valid. Silakan coba lagi.")
+        return
+    
     nama = input("Masukkan nama Anda: ")
     
-    kursi_tersedia = hitung_kursi_kosong(film_id)
+    kursi_tersedia = hitung_kursi_kosong(film_id, jadwal_pilihan)
     
     if kursi_tersedia == 0:
-        print("❌ Maaf, tiket untuk film ini sudah habis.")
+        print("❌ Maaf, tiket untuk jadwal ini sudah habis.")
         return
     
     jumlah = input_angka("Jumlah tiket: ")
@@ -122,64 +159,54 @@ def pesan_tiket():
         harga = harga - (harga * DISKON // 100)
         print(f"🎉 Anda mendapatkan diskon {DISKON}%!")
     
-    print(f"Total harga: Rp{harga}")
+    print(f"Total harga: Rp{harga:,}")
     
-    tampilkan_kursi(film_id)
+    tampilkan_kursi(film_id, jadwal_pilihan)
     
     # Pilih kursi
     kursi_terpilih = []
+    kursi_array = get_kursi_array(film_id)
+    max_kursi = len(kursi_array[jadwal_pilihan])
+    
     for i in range(jumlah):
         while True:
-            if film_id == 1:
-                max_kursi = len(kursi_film1) - 1
-                kursi_array = kursi_film1
-            elif film_id == 2:
-                max_kursi = len(kursi_film2) - 1
-                kursi_array = kursi_film2
-            elif film_id == 3:
-                max_kursi = len(kursi_film3) - 1
-                kursi_array = kursi_film3
-            elif film_id == 4:
-                max_kursi = len(kursi_film4) - 1
-                kursi_array = kursi_film4
+            nomor_kursi = input_angka(f"Pilih kursi {i+1} (1-{max_kursi}): ")
             
-            nomor_kursi = input_angka(f"Pilih kursi {i+1} (0-{max_kursi}): ")
+            # Konversi ke index array (mulai dari 0)
+            index_kursi = nomor_kursi - 1
             
-            if nomor_kursi >= 0 and nomor_kursi <= max_kursi and kursi_array[nomor_kursi] == 0:
-                kursi_terpilih.append(nomor_kursi)
-                break
+            if index_kursi >= 0 and index_kursi < max_kursi and kursi_array[jadwal_pilihan][index_kursi] == 0:
+                if index_kursi not in kursi_terpilih:  # Cek duplikasi
+                    kursi_terpilih.append(index_kursi)
+                    break
+                else:
+                    print("❌ Kursi sudah dipilih sebelumnya. Silakan pilih kursi lain.")
             else:
                 print("❌ Kursi tidak valid atau sudah dipesan. Silakan coba lagi.")
     
     # Tandai kursi sebagai terisi
     for kursi in kursi_terpilih:
-        if film_id == 1:
-            kursi_film1[kursi] = 1
-        elif film_id == 2:
-            kursi_film2[kursi] = 1
-        elif film_id == 3:
-            kursi_film3[kursi] = 1
-        elif film_id == 4:
-            kursi_film4[kursi] = 1
+        kursi_array[jadwal_pilihan][kursi] = 1
     
     # Simpan data pemesanan
+    film_data = get_film_data(film_id)
     nama_pemesan[jumlah_pemesanan] = nama
-    if film_id == 1:
-        film_dipesan[jumlah_pemesanan] = film1[1]
-    elif film_id == 2:
-        film_dipesan[jumlah_pemesanan] = film2[1]
-    elif film_id == 3:
-        film_dipesan[jumlah_pemesanan] = film3[1]
-    elif film_id == 4:
-        film_dipesan[jumlah_pemesanan] = film4[1]
-    
+    film_dipesan[jumlah_pemesanan] = film_data[1]
+    jadwal_dipesan[jumlah_pemesanan] = film_data[3][jadwal_pilihan]
     jumlah_tiket[jumlah_pemesanan] = jumlah
     total_harga[jumlah_pemesanan] = harga
-    kursi_dipilih[jumlah_pemesanan] = kursi_terpilih.copy()
+    
+    # Konversi kembali ke nomor kursi (mulai dari 1) untuk display
+    kursi_display = [k + 1 for k in kursi_terpilih]
+    kursi_dipilih[jumlah_pemesanan] = kursi_terpilih.copy()  # Simpan index asli
     
     jumlah_pemesanan = jumlah_pemesanan + 1
     
-    print(f"✅ Tiket berhasil dipesan! Total harga: Rp{harga}")
+    print(f"✅ Tiket berhasil dipesan!")
+    print(f"   Film: {film_data[1]}")
+    print(f"   Jadwal: {film_data[3][jadwal_pilihan]}")
+    print(f"   Kursi: {kursi_display}")
+    print(f"   Total harga: Rp{harga:,}")
 
 def lihat_pemesanan():
     """Menampilkan daftar pemesanan"""
@@ -190,7 +217,10 @@ def lihat_pemesanan():
     
     for i in range(jumlah_pemesanan):
         if nama_pemesan[i] != "":  # Pemesanan masih aktif
-            print(f"{i+1}. {nama_pemesan[i]} memesan {jumlah_tiket[i]} tiket untuk '{film_dipesan[i]}' - Total: Rp{total_harga[i]} - Kursi: {kursi_dipilih[i]}")
+            # Konversi kursi ke nomor display (mulai dari 1)
+            kursi_display = [k + 1 for k in kursi_dipilih[i]]
+            print(f"{i+1}. {nama_pemesan[i]} - {film_dipesan[i]} ({jadwal_dipesan[i]})")
+            print(f"    Tiket: {jumlah_tiket[i]} - Kursi: {kursi_display} - Total: Rp{total_harga[i]:,}")
 
 def batalkan_pemesanan():
     """Membatalkan pemesanan"""
@@ -206,23 +236,33 @@ def batalkan_pemesanan():
     
     # Bebaskan kursi
     film_yang_dibatalkan = film_dipesan[nomor]
+    jadwal_yang_dibatalkan = jadwal_dipesan[nomor]
     kursi_yang_dibebaskan = kursi_dipilih[nomor]
     
-    for kursi in kursi_yang_dibebaskan:
-        if film_yang_dibatalkan == film1[1]:
-            kursi_film1[kursi] = 0
-        elif film_yang_dibatalkan == film2[1]:
-            kursi_film2[kursi] = 0
-        elif film_yang_dibatalkan == film3[1]:
-            kursi_film3[kursi] = 0
-        elif film_yang_dibatalkan == film4[1]:
-            kursi_film4[kursi] = 0
+    # Cari film ID dan jadwal index
+    film_id = None
+    jadwal_index = None
     
-    print(f"✅ Pemesanan berhasil dibatalkan. Uang dikembalikan: Rp{total_harga[nomor]}")
+    for film in [film1, film2, film3, film4]:
+        if film[1] == film_yang_dibatalkan:
+            film_id = film[0]
+            for i, jadwal in enumerate(film[3]):
+                if jadwal == jadwal_yang_dibatalkan:
+                    jadwal_index = i
+                    break
+            break
+    
+    if film_id is not None and jadwal_index is not None:
+        kursi_array = get_kursi_array(film_id)
+        for kursi in kursi_yang_dibebaskan:
+            kursi_array[jadwal_index][kursi] = 0
+    
+    print(f"✅ Pemesanan berhasil dibatalkan. Uang dikembalikan: Rp{total_harga[nomor]:,}")
     
     # Hapus data pemesanan
     nama_pemesan[nomor] = ""
     film_dipesan[nomor] = ""
+    jadwal_dipesan[nomor] = ""
     jumlah_tiket[nomor] = 0
     total_harga[nomor] = 0
     kursi_dipilih[nomor] = []

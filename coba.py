@@ -1,373 +1,324 @@
+# Film dengan 3 jadwal waktu berbeda
+film1 = [1, "Avengers: Endgame", 50, ["10:00", "14:00", "18:00"]]
+film2 = [2, "Inception", 50, ["11:00", "15:00", "19:00"]]
+film3 = [3, "Interstellar", 50, ["12:00", "16:00", "20:00"]]
+film4 = [4, "The Batman", 50, ["13:00", "17:00", "21:00"]]
 
-# Daftar film dengan format: [ID, Nama Film, Jumlah Kursi]
-daftar_film = [
-    [1, "Avengers: Endgame", 20],
-    [2, "Spider-Man: No Way Home", 25],
-    [3, "The Batman", 15],
-    [4, "Doctor Strange", 30],
-    [5, "Top Gun: Maverick", 20]
-]
-# 💰 KONFIGURASI HARGA
-HARGA_TIKET = 35000
-MINIMAL_DISKON = 3  # Minimal tiket untuk dapat diskon
-PERSENTASE_DISKON = 0.15  # Diskon 15%
+HARGA_TIKET = 30000
+BATAS_DISKON = 5
+DISKON = 10  
 
-# 🪑 SISTEM KURSI
-# Membuat dictionary untuk menyimpan status kursi setiap film
-kursi_film = {}
-for film in daftar_film:
-    film_id = film[0]
-    jumlah_kursi = film[2]
-    # Buat list kursi kosong untuk setiap film
-    kursi_film[film_id] = ["KOSONG"] * jumlah_kursi
+kursi_film1 = [[0] * 50, [0] * 50, [0] * 50]
+kursi_film2 = [[0] * 50, [0] * 50, [0] * 50]
+kursi_film3 = [[0] * 50, [0] * 50, [0] * 50]
+kursi_film4 = [[0] * 50, [0] * 50, [0] * 50]
 
-# 🎫 SISTEM TIKET
-daftar_pemesanan = []  # List untuk menyimpan semua pemesanan
-nomor_tiket = 1  # Counter untuk nomor tiket
+nama_pemesan = [""] * 100
+film_dipesan = [""] * 100
+jadwal_dipesan = [""] * 100
+jumlah_tiket = [0] * 100
+total_harga = [0] * 100
+kursi_dipilih = [[] for i in range(100)]
+jumlah_pemesanan = 0
 
-def validasi_angka(teks_input):
-    """
-    Fungsi untuk memvalidasi input hanya berisi angka
-    Input: string yang ingin divalidasi
-    Output: True jika valid, False jika tidak
-    """
-    if not teks_input:  # Jika input kosong
+def cek_angka(teks):
+    """Mengecek apakah input adalah angka"""
+    if len(teks) == 0:
         return False
-    
-    # Cek setiap karakter
-    for karakter in teks_input:
+    for karakter in teks:
         if karakter < '0' or karakter > '9':
             return False
     return True
 
-
 def input_angka(pesan):
-    """
-    Fungsi untuk meminta input angka dengan validasi
-    Input: pesan yang ditampilkan ke user
-    Output: angka yang valid
-    """
+    """Meminta input angka dari user"""
     while True:
-        user_input = input(pesan)
-        if validasi_angka(user_input):
-            return int(user_input)
-        print("❌ Harap masukkan angka yang valid!")
+        nilai = input(pesan)
+        if cek_angka(nilai):
+            return int(nilai)
+        print("❌ Input harus berupa angka. Silakan coba lagi.")
 
+def get_film_data(film_id):
+    """Mendapatkan data film berdasarkan ID"""
+    if film_id == 1:
+        return film1
+    elif film_id == 2:
+        return film2
+    elif film_id == 3:
+        return film3
+    elif film_id == 4:
+        return film4
+    return None
 
-def tampilkan_garis():
-    """Fungsi untuk menampilkan garis pemisah"""
-    print("=" * 50)
+def get_kursi_array(film_id):
+    """Mendapatkan array kursi berdasarkan film ID"""
+    if film_id == 1:
+        return kursi_film1
+    elif film_id == 2:
+        return kursi_film2
+    elif film_id == 3:
+        return kursi_film3
+    elif film_id == 4:
+        return kursi_film4
+    return None
 
-
-def hitung_total_harga(jumlah_tiket):
-    """
-    Fungsi untuk menghitung total harga dengan diskon
-    Input: jumlah tiket
-    Output: total harga setelah diskon (jika ada)
-    """
-    total = jumlah_tiket * HARGA_TIKET
+def hitung_kursi_kosong(film_id, jadwal_index):
+    """Menghitung jumlah kursi yang masih kosong untuk film dan jadwal tertentu"""
+    kursi_array = get_kursi_array(film_id)
+    if kursi_array is None:
+        return 0
     
-    # Cek apakah dapat diskon
-    if jumlah_tiket >= MINIMAL_DISKON:
-        diskon = total * PERSENTASE_DISKON
-        total_setelah_diskon = total - diskon
-        print(f"🎉 Selamat! Anda mendapat diskon {int(PERSENTASE_DISKON*100)}%")
-        print(f"   Harga asli: Rp {total:,}")
-        print(f"   Diskon: Rp {diskon:,}")
-        print(f"   Total bayar: Rp {total_setelah_diskon:,}")
-        return total_setelah_diskon
-    
-    return total
+    jumlah_kosong = 0
+    for kursi in kursi_array[jadwal_index]:
+        if kursi == 0:
+            jumlah_kosong += 1
+    return jumlah_kosong
 
-def tampilkan_menu_utama():
-    """Fungsi untuk menampilkan menu utama"""
-    tampilkan_garis()
-    print("🎬 SISTEM BOOKING TIKET BIOSKOP 🎬")
-    tampilkan_garis()
-    print("1. 📋 Lihat Daftar Film")
-    print("2. 🎫 Pesan Tiket")
-    print("3. 📜 Lihat Daftar Pemesanan")
-    print("4. ❌ Batalkan Pemesanan")
-    print("5. 🪑 Lihat Status Kursi")
-    print("6. 💰 Lihat Laporan Pendapatan")
-    print("7. 🚪 Keluar")
-    tampilkan_garis()
-
-def tampilkan_daftar_film():
-    """Fungsi untuk menampilkan semua film yang tersedia"""
-    print("\n📋 DAFTAR FILM YANG TERSEDIA:")
-    print("-" * 40)
-    
+def tampilkan_film():
+    """Menampilkan daftar film dengan jadwal"""
+    print("\n--- Daftar Film ---")
+    daftar_film = [film1, film2, film3, film4]
     for film in daftar_film:
-        film_id = film[0]
-        nama_film = film[1]
-        total_kursi = film[2]
-        
-        # Hitung kursi yang masih kosong
-        kursi_kosong = kursi_film[film_id].count("KOSONG")
-        kursi_terisi = total_kursi - kursi_kosong
-        
-        print(f"{film_id}. {nama_film}")
-        print(f"   💺 Kursi tersedia: {kursi_kosong}/{total_kursi}")
-        print(f"   💰 Harga: Rp {HARGA_TIKET:,}")
-        print()
+        print(f"{film[0]}. {film[1]}")
+        for i in range(len(film[3])):
+            jadwal = film[3][i]
+            kursi_kosong = hitung_kursi_kosong(film[0], i)
+            print(f"   Jadwal {i+1}: {jadwal} ({kursi_kosong} kursi tersedia)")
 
-def tampilkan_status_kursi(film_id):
-    """
-    Fungsi untuk menampilkan status kursi suatu film
-    Input: ID film
-    """
-    # Cari nama film berdasarkan ID
-    nama_film = ""
-    for film in daftar_film:
-        if film[0] == film_id:
-            nama_film = film[1]
-            break
-    
-    print(f"\n🪑 STATUS KURSI - {nama_film}")
-    print("-" * 40)
-    print("Keterangan: [K] = Kosong, [X] = Terisi")
-    print()
-    # Tampilkan nomor kursi
-    print("Nomor kursi:")
-    for i in range(len(kursi_film[film_id])):
-        print(f"{i+1:2d}", end=" ")
-    print()
-    # Tampilkan status kursi
-    print("Status     :")
-    for status in kursi_film[film_id]:
-        if status == "KOSONG":
-            print("[K]", end=" ")
-        else:
-            print("[X]", end=" ")
-    print()
-
-def tampilkan_semua_pemesanan():
-    """Fungsi untuk menampilkan semua pemesanan"""
-    print("\n📜 DAFTAR SEMUA PEMESANAN:")
-    print("-" * 60)
-    
-    if not daftar_pemesanan:
-        print("Belum ada pemesanan.")
+def tampilkan_jadwal_film(film_id):
+    """Menampilkan jadwal untuk film tertentu"""
+    film_data = get_film_data(film_id)
+    if film_data is None:
         return
     
-    for i, pemesanan in enumerate(daftar_pemesanan):
-        if pemesanan:  # Jika pemesanan tidak dibatalkan
-            print(f"Nomor Tiket: {i+1}")
-            print(f"Nama: {pemesanan['nama']}")
-            print(f"Film: {pemesanan['film']}")
-            print(f"Jumlah Tiket: {pemesanan['jumlah']}")
-            print(f"Kursi: {pemesanan['kursi']}")
-            print(f"Total Bayar: Rp {pemesanan['total']:,}")
-            print("-" * 30)
+    print(f"\nJadwal untuk {film_data[1]}:")
+    for i in range(len(film_data[3])):
+        jadwal = film_data[3][i]
+        kursi_kosong = hitung_kursi_kosong(film_id, i)
+        print(f"{i+1}. {jadwal} ({kursi_kosong} kursi tersedia)")
+
+def tampilkan_kursi(film_id, jadwal_index):
+    """Menampilkan layout kursi untuk film dan jadwal tertentu"""
+    film_data = get_film_data(film_id)
+    kursi_array = get_kursi_array(film_id)
+    
+    if film_data is None or kursi_array is None:
+        return
+    
+    kursi = kursi_array[jadwal_index]
+    nama_film = film_data[1]
+    jadwal = film_data[3][jadwal_index]
+    print()
+    print(f"Kursi untuk {nama_film} - Jadwal {jadwal}:")
+    print("Nomor kursi: ", end="")
+    for i in range(len(kursi)):
+        print(f"{i+1:2}", end=" ")  
+    print()
+    
+    print("Status     : ", end="")
+    for i in range(len(kursi)):
+        if kursi[i] == 0:
+            print("[ ]", end="")
+        else:
+            print("[X]", end="")
+    print()
+    print("Keterangan: [ ] = Kosong, [X] = Terisi")
 
 def pesan_tiket():
     """Fungsi untuk memesan tiket"""
-    global nomor_tiket
-    print("\n🎫 PEMESANAN TIKET")
-    tampilkan_daftar_film()
-    # Pilih film
-    film_id = input_angka("Pilih ID film (1-5): ")
-    # Validasi film ID
-    if film_id < 1 or film_id > len(daftar_film):
-        print("❌ Film tidak ditemukan!")
+    global jumlah_pemesanan
+    
+    tampilkan_film()
+    print()
+    film_id = input_angka("Masukkan ID film yang ingin dipesan: ")
+    
+    if film_id < 1 or film_id > 4:
+        print("❌ Film tidak ditemukan. Silakan coba lagi.")
         return
-    # Ambil data film
-    nama_film = ""
-    for film in daftar_film:
-        if film[0] == film_id:
-            nama_film = film[1]
-            break
-    # Cek kursi tersedia
-    kursi_tersedia = kursi_film[film_id].count("KOSONG")
+    
+    
+    tampilkan_jadwal_film(film_id)
+    jadwal_pilihan = input_angka("Pilih jadwal (1-3): ") - 1
+    
+    if jadwal_pilihan < 0 or jadwal_pilihan > 2:
+        print("❌ Jadwal tidak valid. Silakan coba lagi.")
+        return
+    
+    nama = input("Masukkan nama Anda: ")
+    
+    kursi_tersedia = hitung_kursi_kosong(film_id, jadwal_pilihan)
+    
     if kursi_tersedia == 0:
-        print("❌ Maaf, kursi sudah penuh!")
+        print("❌ Maaf, tiket untuk jadwal ini sudah habis.")
         return
-    print(f"\n✅ Film dipilih: {nama_film}")
-    print(f"💺 Kursi tersedia: {kursi_tersedia}")
-    # Input nama pemesan
-    nama_pemesan = input("Masukkan nama pemesan: ").strip()
-    if not nama_pemesan:
-        print("❌ Nama tidak boleh kosong!")
+    
+    jumlah = input_angka("Jumlah tiket: ")
+    
+    if jumlah <= 0 or jumlah > kursi_tersedia:
+        print("❌ Jumlah tiket tidak valid. Silakan coba lagi.")
         return
-    # Input jumlah tiket
-    jumlah_tiket = input_angka("Jumlah tiket yang ingin dipesan: ")
-    if jumlah_tiket <= 0 or jumlah_tiket > kursi_tersedia:
-        print(f"❌ Jumlah tiket tidak valid! (Maksimal: {kursi_tersedia})")
-        return
-    # Hitung total harga
-    total_harga = hitung_total_harga(jumlah_tiket)
-    # Tampilkan kursi dan pilih kursi
-    tampilkan_status_kursi(film_id)
-    kursi_dipilih = []
-    for i in range(jumlah_tiket):
+    
+    # Hitung harga
+    harga = jumlah * HARGA_TIKET
+    if jumlah >= BATAS_DISKON:
+        harga = harga - (harga * DISKON // 100)
+        print(f"🎉 Anda mendapatkan diskon {DISKON}%!")
+    
+    print(f"Total harga: Rp{harga:,}")
+    
+    tampilkan_kursi(film_id, jadwal_pilihan)
+    
+    # Pilih kursi - gunakan array dengan ukuran tetap
+    kursi_terpilih = [0] * jumlah  # Array untuk menyimpan kursi yang dipilih
+    kursi_array = get_kursi_array(film_id)
+    max_kursi = len(kursi_array[jadwal_pilihan])
+    
+    for i in range(jumlah):
         while True:
-            nomor_kursi = input_angka(f"Pilih kursi ke-{i+1} (1-{len(kursi_film[film_id])}): ")
+            nomor_kursi = input_angka(f"Pilih kursi {i+1} (1-{max_kursi}): ")
             
-            # Validasi nomor kursi
-            if nomor_kursi < 1 or nomor_kursi > len(kursi_film[film_id]):
-                print("❌ Nomor kursi tidak valid!")
-                continue
+            # Konversi ke index array (mulai dari 0)
+            index_kursi = nomor_kursi - 1
             
-            # Cek apakah kursi masih kosong
-            if kursi_film[film_id][nomor_kursi-1] != "KOSONG":
-                print("❌ Kursi sudah terisi! Pilih kursi lain.")
-                continue
-            
-            # Cek apakah kursi sudah dipilih sebelumnya
-            if nomor_kursi in kursi_dipilih:
-                print("❌ Kursi sudah dipilih! Pilih kursi lain.")
-                continue
-            
-            kursi_dipilih.append(nomor_kursi)
-            break
-    # Konfirmasi pemesanan
-    print(f"\n📋 KONFIRMASI PEMESANAN:")
-    print(f"Nama: {nama_pemesan}")
-    print(f"Film: {nama_film}")
-    print(f"Jumlah Tiket: {jumlah_tiket}")
-    print(f"Kursi: {kursi_dipilih}")
-    print(f"Total Bayar: Rp {total_harga:,}")
+            if index_kursi >= 0 and index_kursi < max_kursi and kursi_array[jadwal_pilihan][index_kursi] == 0:
+                # Cek duplikasi manual
+                sudah_dipilih = False
+                for j in range(i):  # Cek kursi yang sudah dipilih sebelumnya
+                    if kursi_terpilih[j] == index_kursi:
+                        sudah_dipilih = True
+                        break
+                
+                if not sudah_dipilih:
+                    kursi_terpilih[i] = index_kursi
+                    break
+                else:
+                    print("❌ Kursi sudah dipilih sebelumnya. Silakan pilih kursi lain.")
+            else:
+                print("❌ Kursi tidak valid atau sudah dipesan. Silakan coba lagi.")
     
-    konfirmasi = input("\nKonfirmasi pemesanan? (y/n): ").lower()
+    # Tandai kursi sebagai terisi
+    for i in range(jumlah):
+        kursi_array[jadwal_pilihan][kursi_terpilih[i]] = 1
     
-    if konfirmasi == 'y' or konfirmasi == 'yes':
-        # Tandai kursi sebagai terisi
-        for kursi in kursi_dipilih:
-            kursi_film[film_id][kursi-1] = "TERISI"    
-        # Simpan pemesanan
-        pemesanan_baru = {
-            'nama': nama_pemesan,
-            'film': nama_film,
-            'jumlah': jumlah_tiket,
-            'kursi': kursi_dipilih,
-            'total': total_harga,
-            'film_id': film_id
-        }  
-        daftar_pemesanan.append(pemesanan_baru)     
-        print(f"\n✅ PEMESANAN BERHASIL!")
-        print(f"Nomor Tiket Anda: {len(daftar_pemesanan)}")
-        print("Simpan nomor tiket untuk referensi.")
-        
-    else:
-        print("❌ Pemesanan dibatalkan.")
+    # Simpan data pemesanan
+    film_data = get_film_data(film_id)
+    nama_pemesan[jumlah_pemesanan] = nama
+    film_dipesan[jumlah_pemesanan] = film_data[1]
+    jadwal_dipesan[jumlah_pemesanan] = film_data[3][jadwal_pilihan]
+    jumlah_tiket[jumlah_pemesanan] = jumlah
+    total_harga[jumlah_pemesanan] = harga
+    
+    # Salin kursi terpilih ke array global
+    kursi_dipilih[jumlah_pemesanan] = [0] * jumlah
+    for i in range(jumlah):
+        kursi_dipilih[jumlah_pemesanan][i] = kursi_terpilih[i]
+    
+    jumlah_pemesanan = jumlah_pemesanan + 1
+    
+    # Buat array untuk display kursi (mulai dari 1)
+    kursi_display = [0] * jumlah
+    for i in range(jumlah):
+        kursi_display[i] = kursi_terpilih[i] + 1
+    
+    print(f"✅ Tiket berhasil dipesan!")
+    print(f"   Film: {film_data[1]}")
+    print(f"   Jadwal: {film_data[3][jadwal_pilihan]}")
+    print(f"   Kursi: {kursi_display}")
+    print(f"   Total harga: Rp{harga:,}")
+
+def lihat_pemesanan():
+    """Menampilkan daftar pemesanan"""
+    print()
+    print("--- Daftar Pemesanan ---")
+    if jumlah_pemesanan == 0:
+        print("Belum ada pemesanan.")
+        return
+    
+    for i in range(jumlah_pemesanan):
+        if nama_pemesan[i] != "":  # Pemesanan masih aktif
+            # Konversi kursi ke nomor display (mulai dari 1)
+            jumlah_kursi = jumlah_tiket[i]
+            kursi_display = [0] * jumlah_kursi
+            for j in range(jumlah_kursi):
+                kursi_display[j] = kursi_dipilih[i][j] + 1
+            
+            print(f"{i+1}. {nama_pemesan[i]} - {film_dipesan[i]} ({jadwal_dipesan[i]})")
+            print(f"    Tiket: {jumlah_tiket[i]} - Kursi: {kursi_display} - Total: Rp{total_harga[i]:,}")
 
 def batalkan_pemesanan():
-    """Fungsi untuk membatalkan pemesanan"""
-    if not daftar_pemesanan:
-        print("❌ Belum ada pemesanan yang bisa dibatalkan.")
+    """Membatalkan pemesanan"""
+    lihat_pemesanan()
+    if jumlah_pemesanan == 0:
         return
     
-    print("\n❌ PEMBATALAN PEMESANAN")
-    tampilkan_semua_pemesanan()
+    nomor = input_angka("Masukkan nomor pesanan yang ingin dibatalkan: ") - 1
     
-    nomor_tiket_batal = input_angka("Masukkan nomor tiket yang ingin dibatalkan: ")
-    
-    if nomor_tiket_batal < 1 or nomor_tiket_batal > len(daftar_pemesanan):
-        print("❌ Nomor tiket tidak valid!")
+    if nomor < 0 or nomor >= jumlah_pemesanan or nama_pemesan[nomor] == "":
+        print("❌ Nomor pesanan tidak valid. Silakan coba lagi.")
         return
     
-    # Ambil data pemesanan (index dimulai dari 0)
-    pemesanan = daftar_pemesanan[nomor_tiket_batal - 1]
+    # Bebaskan kursi
+    film_yang_dibatalkan = film_dipesan[nomor]
+    jadwal_yang_dibatalkan = jadwal_dipesan[nomor]
+    kursi_yang_dibebaskan = kursi_dipilih[nomor]
+    jumlah_kursi_dibebaskan = jumlah_tiket[nomor]
     
-    if not pemesanan:
-        print("❌ Tiket sudah dibatalkan sebelumnya!")
-        return
+    # Cari film ID dan jadwal index
+    film_id = None
+    jadwal_index = None
     
-    # Tampilkan detail pemesanan
-    print(f"\n📋 DETAIL PEMESANAN:")
-    print(f"Nama: {pemesanan['nama']}")
-    print(f"Film: {pemesanan['film']}")
-    print(f"Kursi: {pemesanan['kursi']}")
-    print(f"Total: Rp {pemesanan['total']:,}")
-    
-    konfirmasi = input("\nYakin ingin membatalkan? (y/n): ").lower()
-    
-    if konfirmasi == 'y' or konfirmasi == 'yes':
-        # Kembalikan kursi menjadi kosong
-        film_id = pemesanan['film_id']
-        for kursi in pemesanan['kursi']:
-            kursi_film[film_id][kursi-1] = "KOSONG"
-        
-        # Hapus pemesanan
-        daftar_pemesanan[nomor_tiket_batal - 1] = None
-        
-        print(f"✅ Pemesanan berhasil dibatalkan!")
-        print(f"💰 Uang dikembalikan: Rp {pemesanan['total']:,}")
-    else:
-        print("❌ Pembatalan dibatalkan.")
-
-def lihat_status_kursi():
-    """Fungsi untuk melihat status kursi semua film"""
-    print("\n🪑 STATUS KURSI SEMUA FILM")
-    
+    daftar_film = [film1, film2, film3, film4]
     for film in daftar_film:
-        film_id = film[0]
-        tampilkan_status_kursi(film_id)
-        print()
-
-def lihat_laporan():
-    """Fungsi untuk melihat laporan pendapatan"""
-    print("\n💰 LAPORAN PENDAPATAN")
-    print("-" * 40)
+        if film[1] == film_yang_dibatalkan:
+            film_id = film[0]
+            for i in range(len(film[3])):
+                if film[3][i] == jadwal_yang_dibatalkan:
+                    jadwal_index = i
+                    break
+            break
     
-    if not daftar_pemesanan:
-        print("Belum ada transaksi.")
-        return
+    if film_id is not None and jadwal_index is not None:
+        kursi_array = get_kursi_array(film_id)
+        for i in range(jumlah_kursi_dibebaskan):
+            kursi_array[jadwal_index][kursi_yang_dibebaskan[i]] = 0
     
-    total_pendapatan = 0
-    jumlah_tiket_terjual = 0
+    print(f"✅ Pemesanan berhasil dibatalkan. Uang dikembalikan: Rp{total_harga[nomor]:,}")
     
-    for pemesanan in daftar_pemesanan:
-        if pemesanan:  # Jika tidak dibatalkan
-            total_pendapatan += pemesanan['total']
-            jumlah_tiket_terjual += pemesanan['jumlah']
-    
-    print(f"Total Tiket Terjual: {jumlah_tiket_terjual}")
-    print(f"Total Pendapatan: Rp {total_pendapatan:,}")
-    
-    # Statistik per film
-    print("\n📊 STATISTIK PER FILM:")
-    for film in daftar_film:
-        film_id = film[0]
-        nama_film = film[1]
-        total_kursi = film[2]
-        kursi_terisi = kursi_film[film_id].count("TERISI")
-        persentase = (kursi_terisi / total_kursi) * 100
-        
-        print(f"{nama_film}: {kursi_terisi}/{total_kursi} ({persentase:.1f}%)")
+    # Hapus data pemesanan
+    nama_pemesan[nomor] = ""
+    film_dipesan[nomor] = ""
+    jadwal_dipesan[nomor] = ""
+    jumlah_tiket[nomor] = 0
+    total_harga[nomor] = 0
+    kursi_dipilih[nomor] = []
 
 def main():
+    print()
     """Fungsi utama program"""
-    print("Selamat datang di Sistem Booking Tiket Bioskop!")
-    print("Program ini dibuat untuk membantu Anda belajar Python.")
     while True:
-        tampilkan_menu_utama()
-        pilihan = input("Pilih menu (1-7): ")
+        print("===== Aplikasi Tiket Bioskop =====")
+        print("1. Lihat daftar film")
+        print("2. Pesan tiket")
+        print("3. Lihat daftar pemesanan")
+        print("4. Batalkan pemesanan")
+        print("5. Keluar")
+        
+        pilihan = input("Pilih menu: ")
+        
         if pilihan == "1":
-            tampilkan_daftar_film()   
+            tampilkan_film()
         elif pilihan == "2":
-            pesan_tiket()    
+            pesan_tiket()
         elif pilihan == "3":
-            tampilkan_semua_pemesanan()  
+            lihat_pemesanan()
         elif pilihan == "4":
-            batalkan_pemesanan()  
+            batalkan_pemesanan()
         elif pilihan == "5":
-            lihat_status_kursi()    
-        elif pilihan == "6":
-            lihat_laporan()    
-        elif pilihan == "7":
-            print("\n🎬 Terima kasih telah menggunakan sistem booking!")
-            print("Sampai jumpa! 👋")
-            break    
+            print("Terima kasih telah menggunakan aplikasi ini!")
+            break
         else:
-            print("❌ Pilihan tidak valid! Silakan pilih 1-7.")
-        input("\nTekan Enter untuk kembali ke menu...")
+            print("❌ Pilihan tidak valid. Silakan coba lagi.")
 
-
-# ====================================
-# JALANKAN PROGRAM
-# ====================================
-
+# Menjalankan program
 if __name__ == "__main__":
     main()

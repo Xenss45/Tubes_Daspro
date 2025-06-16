@@ -1,8 +1,8 @@
 movies = [
     [1, "Avengers: Endgame", 50],
-    [2, "Inception", 40],
-    [3, "Interstellar", 30],
-    [4, "The Batman", 25]
+    [2, "Inception", 50],
+    [3, "Interstellar", 50],
+    [4, "The Batman", 50]
 ]
 
 TICKET_PRICE = 30000  
