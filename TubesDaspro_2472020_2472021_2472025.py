@@ -13,26 +13,42 @@ jam4 = ["13:00", "17:00", "21:00"]
 # Harga tiket
 harga = 30000
 
+# Angka untuk denah kursi
+angka = ["1   2   3   4   5   6   7   8   9   10",
+        "11  12  13  14  15  16  17  18  19  20",
+        "21  22  23  24  25  26  27  28  29  30",
+        "31  32  33  34  35  36  37  38  39  40",
+        "41  42  43  44  45  46  47  48  49  50"]
+
 # Kursi untuk setiap film dan jam (50 kursi, 0=kosong, 1=terisi)
 # Film 1
-film1_jam1 = [0] * 50
-film1_jam2 = [0] * 50
-film1_jam3 = [0] * 50
+film1_jam1 = [[0]*10, [0]*10, [0]*10, [0]*10, [0]*10]
+film1_jam2 = [[0]*10, [0]*10, [0]*10, [0]*10, [0]*10]
+film1_jam3 = [[0]*10, [0]*10, [0]*10, [0]*10, [0]*10]
 
 # Film 2
-film2_jam1 = [0] * 50
-film2_jam2 = [0] * 50
-film2_jam3 = [0] * 50
+film2_jam1 = [[0]*10, [0]*10, [0]*10, [0]*10, [0]*10]
+film2_jam2 = [[0]*10, [0]*10, [0]*10, [0]*10, [0]*10]
+film2_jam3 = [[0]*10, [0]*10, [0]*10, [0]*10, [0]*10]
 
 # Film 3
-film3_jam1 = [0] * 50
-film3_jam2 = [0] * 50
-film3_jam3 = [0] * 50
+film3_jam1 = [[0]*10, [0]*10, [0]*10, [0]*10, [0]*10]
+film3_jam2 = [[0]*10, [0]*10, [0]*10, [0]*10, [0]*10]
+film3_jam3 = [[0]*10, [0]*10, [0]*10, [0]*10, [0]*10]
 
 # Film 4
-film4_jam1 = [0] * 50
-film4_jam2 = [0] * 50
-film4_jam3 = [0] * 50
+film4_jam1 = [[0]*10, [0]*10, [0]*10, [0]*10, [0]*10]
+film4_jam2 = [[0]*10, [0]*10, [0]*10, [0]*10, [0]*10]
+film4_jam3 = [[0]*10, [0]*10, [0]*10, [0]*10, [0]*10]
+
+# Paket paket
+paket_makan = [
+    {"nomor": "Paket 1","nama": "Popcorn kecil + Minuman", "harga": 15000},
+    {"nomor": "Paket 2","nama": "Popcorn besar + Minuman", "harga": 20000},
+    {"nomor": "Paket 3","nama": "Popcorn kecil & besar + Minuman", "harga": 30000}
+]
+
+paket_pilihan = [0] * 100  # menyimpan nomor paket per pemesanan
 
 # Data pemesanan (maksimal 100 pemesanan)
 nama_pemesan = [""] * 100
@@ -99,18 +115,21 @@ def hitung_kursi_kosong(pilihan_film, pilihan_jam):
         kursi_data = film4_jam3
     
     # Hitung kursi kosong
-    for i in range(50):
-        if kursi_data[i] == 0:
-            kursi_kosong = kursi_kosong + 1
+    kursi_kosong = 0
+    for baris in range(len(kursi_data)):
+        for kolom in range(len(kursi_data[baris])):
+            if kursi_data[baris][kolom] == 0:
+                kursi_kosong += 1
     
     return kursi_kosong
 
 def tampilkan_kursi(pilihan_film, pilihan_jam):
     print()
     print("=== DENAH KURSI ===")
-    print("0 = Kosong, 1 = Terisi")
-    
-    # Pilih data kursi yang sesuai
+    print("[ ] = Kosong, [x] = Terisi")
+
+    kursi_data = []
+
     if pilihan_film == 1 and pilihan_jam == 1:
         kursi_data = film1_jam1
     elif pilihan_film == 1 and pilihan_jam == 2:
@@ -135,13 +154,32 @@ def tampilkan_kursi(pilihan_film, pilihan_jam):
         kursi_data = film4_jam2
     elif pilihan_film == 4 and pilihan_jam == 3:
         kursi_data = film4_jam3
-    
-    # Tampilkan kursi
-    for i in range(50):
-        print("Kursi", i+1, ":", kursi_data[i])
+
+    baris = 0
+    while baris < len(kursi_data):
+        kolom = 0
+        while kolom < len(kursi_data[baris]):
+            if kursi_data[baris][kolom] == 0:
+                print("[ ]", end=" ")
+            else:
+                print("[x]", end=" ")
+            kolom += 1
+        print()
+        baris += 1
+
+def get_kursi_data(pilihan_film, pilihan_jam):
+    if pilihan_film == 1:
+        return [film1_jam1, film1_jam2, film1_jam3][pilihan_jam - 1]
+    elif pilihan_film == 2:
+        return [film2_jam1, film2_jam2, film2_jam3][pilihan_jam - 1]
+    elif pilihan_film == 3:
+        return [film3_jam1, film3_jam2, film3_jam3][pilihan_jam - 1]
+    elif pilihan_film == 4:
+        return [film4_jam1, film4_jam2, film4_jam3][pilihan_jam - 1]
 
 def pesan_tiket():
     global jumlah_pesanan
+    global paket
     
     tampilkan_film()
     print()
@@ -187,87 +225,39 @@ def pesan_tiket():
         else:
             status2 = False
     
-    tampilkan_kursi(pilihan_film, pilihan_jam)
-    kursi_dipilih = [0] * jumlah
-    
+    # Gunakan data kursi 2D
+    kursi_data = get_kursi_data(pilihan_film, pilihan_jam)
+
+    # Tampilkan denah kursi
+    print("\n=== DENAH KURSI ===")
+    print("[ ] = Kosong, [x] = Terisi\n")
+
+    for i in range(len(kursi_data)):
+        print(angka[i])  # cetak nomor kursinya (dari 1 sampai 50, per 10 kursi)
+        for kursi in kursi_data[i]:
+            print("[x]" if kursi == 1 else "[ ]", end=" ")
+        print("\n")
+
+    kursi_data = get_kursi_data(pilihan_film, pilihan_jam)
+    kursi_dipilih = [0] * jumlah  # sudah ada
+
     for i in range(jumlah):
-        print()
-        flag = False
-        while not flag:
-            tersedia = False
-            print("Pilih kursi ke-" + str(i+1) + " (1-50):")
-            nomor_kursi = int(input())
-        
+        while True:
+            print()
+            nomor_kursi = int(input(f"Pilih kursi ke-{i+1} (1-50): "))
             if nomor_kursi < 1 or nomor_kursi > 50:
                 print("Nomor kursi tidak valid!")
-            
-            if pilihan_film == 1 and pilihan_jam == 1:
-                if film1_jam1[nomor_kursi-1] == 1:
-                    print("Kursi sudah terisi!")
-                    
-                else:
-                    tersedia = True
-                    film1_jam1[nomor_kursi-1] = 1
-            elif pilihan_film == 1 and pilihan_jam == 2:
-                if film1_jam2[nomor_kursi-1] == 1:
-                    print("Kursi sudah terisi!")
-                    
-                else:
-                    tersedia = True
-                    film1_jam2[nomor_kursi-1] = 1
-            elif pilihan_film == 1 and pilihan_jam == 3:
-                if film1_jam3[nomor_kursi-1] == 1:
-                    print("Kursi sudah terisi!")
-                    
-                else:
-                    tersedia = True
-                    film1_jam3[nomor_kursi-1] = 1
-            elif pilihan_film == 2 and pilihan_jam == 1:
-                if film2_jam1[nomor_kursi-1] == 1:
-                    print("Kursi sudah terisi!")
-                    
-                else:
-                    tersedia = True
-                    film2_jam1[nomor_kursi-1] = 1
-            elif pilihan_film == 2 and pilihan_jam == 2:
-                if film2_jam2[nomor_kursi-1] == 1:
-                    print("Kursi sudah terisi!")
-                    
-                else:
-                    tersedia = True
-                    film2_jam2[nomor_kursi-1] = 1
-            elif pilihan_film == 2 and pilihan_jam == 3:
-                if film2_jam3[nomor_kursi-1] == 1:
-                    print("Kursi sudah terisi!")
-                    
-                else:
-                    tersedia = True
-                    film2_jam3[nomor_kursi-1] = 1
-            elif pilihan_film == 3 and pilihan_jam == 1:
-                if film3_jam1[nomor_kursi-1] == 1:
-                    print("Kursi sudah terisi!")
-                    
-                else:
-                    tersedia = True
-                    film3_jam1[nomor_kursi-1] = 1
-            elif pilihan_film == 3 and pilihan_jam == 2:
-                if film3_jam2[nomor_kursi-1] == 1:
-                    print("Kursi sudah terisi!")
-                else:
-                    tersedia = True  
-                    film3_jam2[nomor_kursi-1] = 1
-            elif pilihan_film == 3 and pilihan_jam == 3:
-                if film3_jam3[nomor_kursi-1] == 1:
-                    print("Kursi sudah terisi!")
-                
-                else:
-                    film3_jam3[nomor_kursi-1] = 1
-                    tersedia = True
-                    
-            
-            if tersedia == True :
-                kursi_dipilih[i] = nomor_kursi
-                flag = True
+                continue
+
+            baris = (nomor_kursi - 1) // 10
+            kolom = (nomor_kursi - 1) % 10
+
+            if kursi_data[baris][kolom] == 1:
+                print("Kursi sudah terisi!")
+            else:
+                kursi_data[baris][kolom] = 1
+                kursi_dipilih[i] = nomor_kursi  # isi langsung index ke-i
+                break
             
     nama_pemesan[jumlah_pesanan] = nama
     
@@ -295,16 +285,64 @@ def pesan_tiket():
             jam_pilihan[jumlah_pesanan] = jam3[1]
         elif pilihan_jam == 3:
             jam_pilihan[jumlah_pesanan] = jam3[2]
-    
-    
-    jumlah_tiket[jumlah_pesanan] = jumlah
-    total_bayar[jumlah_pesanan] = jumlah * harga
-    
-    jumlah_pesanan = jumlah_pesanan + 1
+    elif pilihan_film == 4:
+        film_pilihan[jumlah_pesanan] = film4
+        if pilihan_jam == 1:
+            jam_pilihan[jumlah_pesanan] = jam4[0]
+        elif pilihan_jam == 2:
+            jam_pilihan[jumlah_pesanan] = jam4[1]
+        elif pilihan_jam == 3:
+            jam_pilihan[jumlah_pesanan] = jam4[2]
+
+
+    jumlah_tiket[jumlah_pesanan] = jumlah 
+    harga_tiket_total = jumlah * harga
+    harga_paket = 0
+
+    print()
+    print("Apakah Anda ingin menambah makanan & minuman? (ya/tidak)")
+    tambah_paket = input()
+
+    if tambah_paket == "ya":
+        print()
+        print("=== PILIHAN PAKET paket ===")
+        
+        for i in range(len(paket_makan)):
+            print(f"{i+1}. {paket_makan[i]['nomor']} : {paket_makan[i]['nama']}  Rp {paket_makan[i]['harga']}")
+        
+        while True:
+            print("Pilih paket (1-3):")
+            paket = int(input())
+            if 1 <= paket <= len(paket_makan):
+                harga_paket = paket_makan[paket - 1]["harga"]
+                break
+            else:
+                print("Pilihan tidak valid!")
+            harga_paket = paket_makan[paket - 1]["harga"]
+        paket_pilihan[jumlah_pesanan] = paket  # simpan nomor paket
+    else:
+        harga_paket = 0
+        paket = 0
+        paket_pilihan[jumlah_pesanan] = 0  # tidak ambil paket
+
+
+    total = harga_tiket_total + harga_paket
+    total_bayar[jumlah_pesanan] = total
+    jumlah_pesanan += 1
+
     print()
     print("=== TIKET BERHASIL DIPESAN ===")
-    print("Nama:", nama)
-    print("Total bayar: Rp", jumlah * harga)
+    print("Nama               :", nama)
+    print("Jumlah tiket       :", jumlah)
+    if tambah_paket == "ya":
+        print("Pilihan paket      :", paket_makan[paket - 1]['nama'])
+    else :
+        print("Pilihan paket      :", "(-)")
+    print("Harga tiket        : Rp", harga_tiket_total)
+    print("Harga paket        : Rp", harga_paket)
+    print("Total yang dibayar : Rp", total)
+
+    
 
 def lihat_pemesanan():
     print()
@@ -313,8 +351,11 @@ def lihat_pemesanan():
         print("Belum ada pemesanan")
     else:
         for i in range(jumlah_pesanan):
-            print(str(i+1) + ".", nama_pemesan[i], "-", film_pilihan[i], "(" + jam_pilihan[i] + ") -", jumlah_tiket[i], "tiket")
-
+            print(str(i+1) + ".", nama_pemesan[i], "-", film_pilihan[i], "(" + jam_pilihan[i] + ") -", jumlah_tiket[i], "tiket",end="")
+            if paket_pilihan[i] >= 1 and paket_pilihan[i] <= 3:
+                print(" -", paket_makan[paket_pilihan[i] - 1]['nomor'])
+            else:
+                print("")
 # Program utama
 def main():
     while True:
