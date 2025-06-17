@@ -1,3 +1,26 @@
+# Nama file : TubesDaspro_2472020_2472021_2472025
+# Penulis : Juan Alexander, Ferdinand Brian, Rafael Adiputra
+# Tujuan program : Membuat agar user bisa memesan film berdasarkan film yang tersedia, jam tayang, memilih kursi, dan
+# paket makanan yang tersedia. Menampilkan juga kursi mana yang tersedia dan sudah terisi
+# -- Kamus Data - 
+# pilihan : var. utk menyimpan pilihan user (int)
+# film1, film2, film3, film4 : var. utk menyimpan nama film (str)
+# jam1, jam2, jam3, jam4 : var. utk menyimpan jam tayang film (str)
+# harga : var. utk harga tiket (int)
+# angka : var. utk menyimpan nomor kursi (str)
+# film1_jam1, film1_jam2, film1_jam3 : var. utk menyimpan data kursi film 1 pada jam ke 1, 2 dan 3 (int)
+# film2_jam1, film2_jam2, film2_jam3 : var. utk menyimpan data kursi film 2 pada jam ke 1, 2 dan 3 (int)
+# film3_jam1, film3_jam2, film3_jam3 : var. utk menyimpan data kursi film 3 pada jam ke 1, 2 dan 3 (int)
+# film4_jam1, film4_jam2, film4_jam3 : var. utk menyimpan data kursi film 4 pada jam ke 1, 2 dan 3 (int)
+# paket_makan : var. utk menyimpan data paket makanan (str, int)
+# paket_pilihan : var. utk menyimpan nomor paket yang dipilih (int)
+# nama_pemesanan : var. utk menyimpan nama user (str)
+# film_pilihan : var. utk menyimpan film yang dipilih user (str)
+# jam_pilihan : var. utk menyimpan jam tayang yang dipilih user (str)
+# jumlah_tiket : var. utk menyimpan jumlah tiket yang dipesan user (int)
+# total_bayar : var. utk menyimpan total harga yang harus dibayar user (int)
+# jumlah_pesanan : var. utk menyimpan jumlah pemesanan yang sudah dilakukan (int)
+
 # Data film sederhana
 film1 = "Avengers: Endgame"
 film2 = "Inception" 
