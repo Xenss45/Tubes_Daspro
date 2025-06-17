@@ -298,14 +298,19 @@ def pesan_tiket():
     kursi_data = get_kursi_data(pilihan_film, pilihan_jam)
 
     # Tampilkan denah kursi
-    print("\n=== DENAH KURSI ===")
-    print("[ ] = Kosong, [x] = Terisi\n")
+    print()
+    print("=== DENAH KURSI ===")
+    print("[ ] = Kosong, [x] = Terisi")
+    print()
 
     for i in range(len(kursi_data)):
         print(angka[i])  
         for kursi in kursi_data[i]:
-            print("[x]" if kursi == 1 else "[ ]", end=" ")
-        print("\n")
+            if kursi == 1:
+                print("[x]" , end=" ")
+            else :
+                print("[ ]" , end=" ")
+        print("")
 
     kursi_data = get_kursi_data(pilihan_film, pilihan_jam)
     kursi_dipilih = [0] * jumlah  
