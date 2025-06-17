@@ -71,7 +71,7 @@ paket_makan = [
     {"nomor": "Paket 3","nama": "Popcorn kecil & besar + Minuman", "harga": 30000}
 ]
 
-paket_pilihan = [0] * 100  # menyimpan nomor paket per pemesanan
+paket_pilihan = [0] * 100  
 
 # Data pemesanan (maksimal 100 pemesanan)
 nama_pemesan = [""] * 100
@@ -81,6 +81,8 @@ jumlah_tiket = [0] * 100
 total_bayar = [0] * 100
 jumlah_pesanan = 0
 
+# Kamus lokal
+# untuk menampilkan film yang tersedia
 def tampilkan_film():
     print()
     print("=== DAFTAR FILM ===")
@@ -89,6 +91,9 @@ def tampilkan_film():
     print("3.", film3)
     print("4.", film4)
 
+# Kamus lokal
+# pilihan_film : parameter fungsi tampilkan_jam
+# jam1, jam2, jam3, jam4 : var. utk menyimpan jam tayang film yang dipilih user (str)
 def tampilkan_jam(pilihan_film):
     print()
     print("=== JAM TAYANG ===")
@@ -109,9 +114,17 @@ def tampilkan_jam(pilihan_film):
         print("2.", jam4[1])
         print("3.", jam4[2])
 
+# Kamus lokal
+# pilihan_film, pilihan_jam : parameter fungsi hitung_kursi_kosong
+# kursi_kosong : var. utk menyimpan jumlah kursi kosong (int)
+# kursi_data : var. utk menyimpan data kursi yang dipilih user pada tiap jam tayang (int)
+# film1_jam1, film1_jam2, film1_jam3 : var. utk menyimpan data kursi film 1 pada jam ke 1, 2 dan 3 (int)
+# film2_jam1, film2_jam2, film2_jam3 : var. utk menyimpan data kursi film 2 pada jam ke 1, 2 dan 3 (int)
+# film3_jam1, film3_jam2, film3_jam3 : var. utk menyimpan data kursi film 3 pada jam ke 1, 2 dan 3 (int)
+# film4_jam1, film4_jam2, film4_jam3 : var. utk menyimpan data kursi film 4 pada jam ke 1, 2 dan 3 (int)
+# baris, kolom : var. utk looping data kursi 
 def hitung_kursi_kosong(pilihan_film, pilihan_jam):
     kursi_kosong = 0
-    
     if pilihan_film == 1 and pilihan_jam == 1:
         kursi_data = film1_jam1
     elif pilihan_film == 1 and pilihan_jam == 2:
@@ -146,6 +159,14 @@ def hitung_kursi_kosong(pilihan_film, pilihan_jam):
     
     return kursi_kosong
 
+# Kamus lokal
+# pilihan_film, pilihan_jam : parameter fungsi tampilkan_kursi
+# kursi_data : var. utk menyimpan data kursi yang dipilih user pada tiap jam tayang (int)
+# film1_jam1, film1_jam2, film1_jam3 : var. utk menyimpan data kursi film 1 pada jam ke 1, 2 dan 3 (int)
+# film2_jam1, film2_jam2, film2_jam3 : var. utk menyimpan data kursi film 2 pada jam ke 1, 2 dan 3 (int)
+# film3_jam1, film3_jam2, film3_jam3 : var. utk menyimpan data kursi film 3 pada jam ke 1, 2 dan 3 (int)
+# film4_jam1, film4_jam2, film4_jam3 : var. utk menyimpan data kursi film 4 pada jam ke 1, 2 dan 3 (int)
+# baris, kolom : var. utk looping data kursi
 def tampilkan_kursi(pilihan_film, pilihan_jam):
     print()
     print("=== DENAH KURSI ===")
@@ -190,6 +211,8 @@ def tampilkan_kursi(pilihan_film, pilihan_jam):
         print()
         baris += 1
 
+# Kamus lokal
+# pilihan_film, pilihan_jam : parameter fungsi get_kursi_data
 def get_kursi_data(pilihan_film, pilihan_jam):
     if pilihan_film == 1:
         return [film1_jam1, film1_jam2, film1_jam3][pilihan_jam - 1]
@@ -200,6 +223,29 @@ def get_kursi_data(pilihan_film, pilihan_jam):
     elif pilihan_film == 4:
         return [film4_jam1, film4_jam2, film4_jam3][pilihan_jam - 1]
 
+# Kamus lokal
+# status : var. utk menyimpan status pemilihan film (bool)
+# pilihan_film : var. input utk memilih film (int)
+# status1 : var. utk menyimpan status pemilihan jam (bool)
+# pilihan_jam : var. input utk memilih jam tayang (int)
+# kursi_tersedia : var. utk memanggil fungsi hitung_kursi_kosong
+# nama : var. input utk menyimpan nama user (str)
+# status2 : var. utk menyimpan status pemilihan jumlah tiket (bool)
+# jumlah : var. input utk menyimpan jumlah tiket yang dipesan (int)
+# kursi_data : var. utk memanggil fungsi get_kursi_data
+# kursi_dipilih : var. utk menyimpan kursi yang dipilih user (int)
+# paket : var. input utk menyimpan pilihan paket makanan (int)
+# paket_pilihan : var. utk menyimpan nomor paket yang dipilih user (int)
+# harga_paket : var. utk menyimpan harga paket makanan (int)
+# total : var. utk menyimpan total harga yang harus dibayar user (int)
+# nama_pemesan, film_pilihan, jam_pilihan, jumlah_tiket, total_bayar : var. utk menyimpan data pemesanan
+# tambah_paket : var. input utk menanyakan apakah user ingin menambah paket makanan atau tidak (str)
+# paket_makan : var. utk menyimpan data paket makanan (str, int)
+# nomor_kursi : var. input utk menyimpan nomor kursi yang dipilih user (int)
+# baris, kolom : var. utk menyimpan posisi kursi yang dipilih user (int)
+# jam_pilihan : var. utk menyimpan jam tayang yang dipilih user (str)
+# film1, film2, film3, film4 : var. utk menyimpan nama film yang dipilih user (str)
+# jam1, jam2, jam3, jam4 : var. utk menyimpan jam tayang yang dipilih user (str)
 def pesan_tiket():
     global jumlah_pesanan
     global paket
@@ -256,13 +302,13 @@ def pesan_tiket():
     print("[ ] = Kosong, [x] = Terisi\n")
 
     for i in range(len(kursi_data)):
-        print(angka[i])  # cetak nomor kursinya (dari 1 sampai 50, per 10 kursi)
+        print(angka[i])  
         for kursi in kursi_data[i]:
             print("[x]" if kursi == 1 else "[ ]", end=" ")
         print("\n")
 
     kursi_data = get_kursi_data(pilihan_film, pilihan_jam)
-    kursi_dipilih = [0] * jumlah  # sudah ada
+    kursi_dipilih = [0] * jumlah  
 
     for i in range(jumlah):
         while True:
@@ -279,7 +325,7 @@ def pesan_tiket():
                 print("Kursi sudah terisi!")
             else:
                 kursi_data[baris][kolom] = 1
-                kursi_dipilih[i] = nomor_kursi  # isi langsung index ke-i
+                kursi_dipilih[i] = nomor_kursi  
                 break
             
     nama_pemesan[jumlah_pesanan] = nama
@@ -342,11 +388,11 @@ def pesan_tiket():
             else:
                 print("Pilihan tidak valid!")
             harga_paket = paket_makan[paket - 1]["harga"]
-        paket_pilihan[jumlah_pesanan] = paket  # simpan nomor paket
+        paket_pilihan[jumlah_pesanan] = paket  
     else:
         harga_paket = 0
         paket = 0
-        paket_pilihan[jumlah_pesanan] = 0  # tidak ambil paket
+        paket_pilihan[jumlah_pesanan] = 0  
 
 
     total = harga_tiket_total + harga_paket
@@ -365,8 +411,9 @@ def pesan_tiket():
     print("Harga paket        : Rp", harga_paket)
     print("Total yang dibayar : Rp", total)
 
-    
-
+# Kamus lokal 
+# nama_pemesan, film_pilihan, jam_pilihan, jumlah_tiket, paket_pilihan : var. utk menyimpan data pemesanan
+# paket_makan : var. utk menyimpan data paket makanan (str, int)
 def lihat_pemesanan():
     print()
     print("=== DAFTAR PEMESANAN ===")
@@ -379,6 +426,7 @@ def lihat_pemesanan():
                 print(" -", paket_makan[paket_pilihan[i] - 1]['nomor'])
             else:
                 print("")
+
 # Program utama
 def main():
     while True:
