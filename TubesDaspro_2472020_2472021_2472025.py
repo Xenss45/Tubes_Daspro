@@ -312,7 +312,7 @@ def pesan_tiket():
                 print("[ ]" , end=" ")
         print("")
 
-    kursi_data = get_kursi_data(pilihan_film, pilihan_jam)
+   
     kursi_dipilih = [0] * jumlah  
 
     for i in range(jumlah):
@@ -428,9 +428,8 @@ def lihat_pemesanan():
         for i in range(jumlah_pesanan):
             print(str(i+1) + ".", nama_pemesan[i], "-", film_pilihan[i], "(" + jam_pilihan[i] + ") -", jumlah_tiket[i], "tiket",end="")
             if paket_pilihan[i] >= 1 and paket_pilihan[i] <= 3:
-                print(" -", paket_makan[paket_pilihan[i] - 1]['nomor'])
-            else:
-                print("")
+                print(" -", paket_makan[paket_pilihan[i] - 1]['nomor'],end="")
+            print(" -",total_bayar[i])
 
 # Program utama
 def main():
