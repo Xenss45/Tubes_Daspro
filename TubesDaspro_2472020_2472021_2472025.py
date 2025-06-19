@@ -21,50 +21,40 @@
 # total_bayar : var. utk menyimpan total harga yang harus dibayar user (int)
 # jumlah_pesanan : var. utk menyimpan jumlah pemesanan yang sudah dilakukan (int)
 
-# Data film sederhana
 film1 = "Avengers: Endgame"
 film2 = "Inception" 
 film3 = "Interstellar"
 film4 = "The Batman"
 
-# Jam tayang untuk setiap film
 jam1 = ["10:00", "14:00", "18:00"]
 jam2 = ["11:00", "15:00", "19:00"] 
 jam3 = ["12:00", "16:00", "20:00"]
 jam4 = ["13:00", "17:00", "21:00"]
 
-# Harga tiket
 harga = 30000
 
-# Angka untuk denah kursi
 angka = ["1   2   3   4   5   6   7   8   9   10",
         "11  12  13  14  15  16  17  18  19  20",
         "21  22  23  24  25  26  27  28  29  30",
         "31  32  33  34  35  36  37  38  39  40",
         "41  42  43  44  45  46  47  48  49  50"]
 
-# Kursi untuk setiap film dan jam (50 kursi, 0=kosong, 1=terisi)
-# Film 1
 film1_jam1 = [[0]*10, [0]*10, [0]*10, [0]*10, [0]*10]
 film1_jam2 = [[0]*10, [0]*10, [0]*10, [0]*10, [0]*10]
 film1_jam3 = [[0]*10, [0]*10, [0]*10, [0]*10, [0]*10]
 
-# Film 2
 film2_jam1 = [[0]*10, [0]*10, [0]*10, [0]*10, [0]*10]
 film2_jam2 = [[0]*10, [0]*10, [0]*10, [0]*10, [0]*10]
 film2_jam3 = [[0]*10, [0]*10, [0]*10, [0]*10, [0]*10]
 
-# Film 3
 film3_jam1 = [[0]*10, [0]*10, [0]*10, [0]*10, [0]*10]
 film3_jam2 = [[0]*10, [0]*10, [0]*10, [0]*10, [0]*10]
 film3_jam3 = [[0]*10, [0]*10, [0]*10, [0]*10, [0]*10]
 
-# Film 4
 film4_jam1 = [[0]*10, [0]*10, [0]*10, [0]*10, [0]*10]
 film4_jam2 = [[0]*10, [0]*10, [0]*10, [0]*10, [0]*10]
 film4_jam3 = [[0]*10, [0]*10, [0]*10, [0]*10, [0]*10]
 
-# Paket paket
 paket_makan = [
     {"nomor": "Paket 1","nama": "Popcorn kecil + Minuman", "harga": 15000},
     {"nomor": "Paket 2","nama": "Popcorn besar + Minuman", "harga": 20000},
@@ -72,8 +62,6 @@ paket_makan = [
 ]
 
 paket_pilihan = [0] * 100  
-
-# Data pemesanan (maksimal 100 pemesanan)
 nama_pemesan = [""] * 100
 film_pilihan = [""] * 100
 jam_pilihan = [""] * 100
@@ -150,7 +138,6 @@ def hitung_kursi_kosong(pilihan_film, pilihan_jam):
     elif pilihan_film == 4 and pilihan_jam == 3:
         kursi_data = film4_jam3
     
-    # Hitung kursi kosong
     kursi_kosong = 0
     for baris in range(len(kursi_data)):
         for kolom in range(len(kursi_data[baris])):
@@ -248,7 +235,6 @@ def get_kursi_data(pilihan_film, pilihan_jam):
 # jam1, jam2, jam3, jam4 : var. utk menyimpan jam tayang yang dipilih user (str)
 def pesan_tiket():
     global jumlah_pesanan
-    global paket
     
     tampilkan_film()
     print()
@@ -294,10 +280,8 @@ def pesan_tiket():
         else:
             status2 = False
     
-    # Gunakan data kursi 2D
     kursi_data = get_kursi_data(pilihan_film, pilihan_jam)
 
-    # Tampilkan denah kursi
     print()
     print("=== DENAH KURSI ===")
     print("[ ] = Kosong, [x] = Terisi")
@@ -431,7 +415,6 @@ def lihat_pemesanan():
                 print(" -", paket_makan[paket_pilihan[i] - 1]['nomor'],end="")
             print(" -",total_bayar[i])
 
-# Program utama
 def main():
     while True:
         print()
