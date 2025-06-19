@@ -379,7 +379,7 @@ def pesan_tiket():
 
     if tambah_paket == "ya":
         print()
-        print("=== PILIHAN PAKET paket ===")
+        print("=== PILIHAN PAKET ===")
         
         for i in range(len(paket_makan)):
             print(f"{i+1}. {paket_makan[i]['nomor']} : {paket_makan[i]['nama']}  Rp {paket_makan[i]['harga']}")
